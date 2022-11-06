@@ -12,6 +12,20 @@ public class ServerConsole implements ChatIF {
 		server = new EchoServer(port,this);
 		console = new Scanner(System.in);
 	}
+	 public void accept() {
+		    try{
+		    	String message;
+		    	
+		    	while(true) {
+		    		message = console.nextLine();
+		    		server.handleMessageFromServerUI(message);
+		    	}
+		    }
+		    catch(Exception ex){
+		    	System.out.println
+		        ("Unexpected error while reading from console!");
+		    }
+		  }
 	
 	
 	

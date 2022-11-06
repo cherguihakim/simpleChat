@@ -3,6 +3,8 @@
 // license found at www.lloseng.com 
 
 
+import java.io.IOException;
+
 import  OCSF.src.ocsf.server.*;
 import common.ChatIF;
 
@@ -53,6 +55,74 @@ public class EchoServer extends AbstractServer
   {
     serverUI.display("Message received: " + msg + " from " + client);
     this.sendToAllClients(msg);
+  }
+  
+  public void handleMessageFromServerUI(String message) {
+	  try {
+		  if(message.startsWith("#")) {
+			  handleServerCommands(message);
+		  }
+		  else {
+			  serverUI.display("SERVER MSG> "+message);
+			  sendToAllClients("SERVER MSG> "+message);
+		  }
+	  }
+	  catch(Exception e) {
+		  serverUI.display("Could not send message to clients.");
+	  }
+  }
+  
+  private void handleServerCommands(String cmd) {
+	  if(cmd.equals("#quit")) {
+		  try {
+			close();
+		} catch (IOException e) {}
+		  System.exit(0);
+	  }
+	  else if(cmd.equals("#stop")) {
+		  stopListening();
+	  }
+	  else if(cmd.equals("#close")) {
+		  try {
+			  close();
+		  }
+		  catch(IOException e) {
+			  System.exit(0);
+		  }
+	  }
+	  else if(cmd.startsWith("#setport")) {
+		  if(!isListening()) {
+			  try {
+				  int newPort = Integer.parseInt(cmd.substring(9,(cmd.length()-1)));
+				  setPort(newPort);
+			  }
+			  catch(NumberFormatException e) {
+				  serverUI.display("Invalid port number");
+			  }
+		  }
+		  else {
+			  serverUI.display("ERROR: cannot change port number while server is open");
+		  }
+	  }
+	  else if(cmd.equals("#start")) {
+		  if(!isListening()) {
+			  try {
+			      listen(); //Start listening for connections
+			    } 
+			    catch (Exception ex) {
+			      serverUI.display("ERROR - Could not listen for clients!");;
+			    }
+		  }
+		  else {
+			  serverUI.display("Server is already listening for clients");
+		  }
+	  }
+	  else if(cmd.equals("#getport")) {
+		  serverUI.display(String.valueOf(getPort()));
+	  }
+	  else {
+		  serverUI.display("Unknown command. Try again!");
+	  }
   }
     
   /**
