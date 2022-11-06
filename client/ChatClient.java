@@ -68,7 +68,12 @@ public class ChatClient extends AbstractClient
   {
     try
     {
-      sendToServer(message);
+    	  if(message.startsWith("#")) {
+        	  handleCommands(message);
+          }
+    	  else {
+    	
+      sendToServer(message);}
     }
     catch(IOException e)
     {
@@ -76,6 +81,74 @@ public class ChatClient extends AbstractClient
         ("Could not send message to server.  Terminating client.");
       quit();
     }
+  }
+  
+  
+  private void handleCommands(String cmd) throws IOException {
+	  if(cmd.equals("#quit")) {
+		  clientUI.display("The client will quit");
+		  quit();
+		  System.exit(0);
+	  }
+	  else if(cmd.equals("#logoff")) {
+		  try {
+			  if(this.isConnected()) {
+		  this.closeConnection();}
+			  else {
+				  clientUI.display("The client is already connected");
+			  }
+		  }
+		  catch(IOException e) {
+			  e.printStackTrace();
+		  }
+		  
+	  }
+	  else if (cmd.startsWith("#sethost")){
+		  if(!isConnected()) {
+			  String newHost = cmd.substring(9,(cmd.length()-1));
+			  setHost(newHost);
+		  }
+		  else{
+			  clientUI.display("ERROR: cannot change host while connected");
+		  }
+	  }
+	  else if (cmd.startsWith("#setport")){
+		  if(!isConnected()) {
+			  try {
+				  int newPort = Integer.parseInt(cmd.substring(9,(cmd.length()-1)));
+				  setPort(newPort);
+			  }
+			  catch(NumberFormatException e) {
+				  clientUI.display("Invalid port number");
+			  }
+		  }
+		  else {
+			  clientUI.display("ERROR: cannot change port number while connected");
+		  }
+	  }
+	  else if(cmd.equals("#login")) {
+		  if(!isConnected()) {
+			  try {
+				  openConnection();
+			  }
+			  catch(IOException e) {
+				  clientUI.display("Unnable to connect to server");
+			  }
+		  }
+		  else {
+			  clientUI.display("Already connected to the server");
+		  }
+		  
+	  }
+	  else if(cmd.equals("#gethost")) {
+		  clientUI.display(getHost());
+	  }
+	  else if(cmd.equals("#getport")) {
+		  clientUI.display(String.valueOf(getPort()));
+	  }
+	  else {
+		  clientUI.display("Unknown command. Try again!");
+	  }
   }
   
   /**
