@@ -3,8 +3,8 @@
 // license found at www.lloseng.com 
 
 
-import OCSF.src.ocsf.server.AbstractServer;
 import  OCSF.src.ocsf.server.*;
+import common.ChatIF;
 
 /**
  * This class overrides some of the methods in the abstract 
@@ -24,6 +24,7 @@ public class EchoServer extends AbstractServer
    * The default port to listen on.
    */
   final public static int DEFAULT_PORT = 5555;
+  ChatIF serverUI;
   
   //Constructors ****************************************************
   
@@ -72,6 +73,17 @@ public class EchoServer extends AbstractServer
     System.out.println
       ("Server has stopped listening for connections.");
   }
+  protected void clientConnected(ConnectionToClient client) {
+	  System.out.print("Client is connected");
+  }
+  
+  synchronized protected void clientDisconnected(
+		    ConnectionToClient client) {
+	  System.out.print("Client is disconnected");
+	  
+  }
+
+  
   
   //Class methods ***************************************************
   
