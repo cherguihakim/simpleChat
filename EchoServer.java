@@ -27,7 +27,7 @@ public class EchoServer extends AbstractServer
    */
   final public static int DEFAULT_PORT = 5555;
   ChatIF serverUI;
-  
+  final private String cle = "loginID";
   //Constructors ****************************************************
   
   /**
@@ -53,8 +53,32 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
-    serverUI.display("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+	  
+	  String msgStr = (String) msg;
+	    if (!msgStr.startsWith("#")) {
+	    	String nom = (String) client.getInfo(cle);
+	        this.sendToAllClients(nom + " > " + msg);
+	        System.out.println("Message received: " + msg + " from " + nom);
+	    }
+	    
+	    else if (msgStr.equals("#login")) {
+	    	try {
+				client.sendToClient("Command #login is not authorized");
+				client.close();
+			} catch (IOException e) {
+				serverUI.display("Error sending message to client");
+			}
+	    }
+	    
+	    else {
+	    	String username = "";
+	    	System.out.println("Message received: " + msg + " from " + client);
+	    	for (int i = 7; i < msgStr.length(); i++) {
+	    		username += msgStr.charAt(i);
+	    	}
+	    	System.out.println(username + " has logged on.");
+	    	client.setInfo(cle, username);
+	    }
   }
   
   public void handleMessageFromServerUI(String message) {

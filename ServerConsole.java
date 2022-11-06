@@ -44,6 +44,17 @@ public class ServerConsole implements ChatIF {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		int port = 0; 
+
+	    try{
+	      port = Integer.parseInt(args[0]);
+	    }
+	    catch(Throwable t){
+	      port = DEFAULT_PORT;
+	    }
+		
+	    ServerConsole sv = new ServerConsole(port);
+	    sv.accept();
 
 	}
 
